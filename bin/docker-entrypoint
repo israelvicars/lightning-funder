@@ -6,9 +6,17 @@ if [ -z "${LD_PRELOAD+x}" ]; then
     export LD_PRELOAD
 fi
 
+# Don't require master key for credentials
+export RAILS_MASTER_KEY_REQUIRED=false
+
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
+  echo "Preparing database..."
+  ./bin/rails db:prepare --trace || {
+    echo "Database preparation failed. Attempting db:create and db:migrate separately..."
+    ./bin/rails db:create --trace
+    ./bin/rails db:migrate --trace
+  }
 fi
 
 exec "${@}"
