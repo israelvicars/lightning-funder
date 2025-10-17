@@ -17,6 +17,9 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
     ./bin/rails db:create --trace
     ./bin/rails db:migrate --trace
   }
+  
+  echo "Running migrations for all databases (primary, cache, queue, cable)..."
+  ./bin/rails db:migrate:all --trace || echo "Some migrations may have already run"
 fi
 
 exec "${@}"
