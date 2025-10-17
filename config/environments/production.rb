@@ -11,7 +11,8 @@ Rails.application.configure do
   config.active_record.encryption.extend_queries = false
   
   # Use inline job processing for simplicity (processes synchronously)
-  config.active_job.queue_adapter = :inline
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Code is not reloaded between requests.
   config.enable_reloading = false

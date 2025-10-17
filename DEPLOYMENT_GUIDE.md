@@ -48,12 +48,12 @@ redis://host:port/0
 
 4. Build Command:
 ```
-bundle install && rails assets:precompile && rails db:migrate && rails db:schema:load:queue
+bundle install && rails assets:precompile && rails db:migrate && rails db:migrate:queue
 ```
 
 Or with trace for debugging:
 ```
-bundle install && rails assets:precompile && rails db:migrate --trace && rails db:schema:load:queue
+bundle install && rails assets:precompile && rails db:migrate --trace && rails db:migrate:queue
 ```
 
 5. Start Command:
@@ -84,8 +84,8 @@ heroku run rails db:schema:load:queue
 3. Set environment variables:
 - `SECRET_KEY_BASE`: [generated secret]
 4. If using Nixpacks (default):
-- `NIXPACKS_BUILD_CMD`: `bundle install && rails assets:precompile && rails db:migrate && rails db:schema:load:queue`
-    - `NIXPACKS_START_CMD`: `rails server -b 0.0.0.0 -p $PORT`
+- `NIXPACKS_BUILD_CMD`: `bundle install && rails assets:precompile && rails db:migrate && rails db:migrate:queue`
+- `NIXPACKS_START_CMD`: `rails server -b 0.0.0.0 -p $PORT`
 5. If using Docker (recommended for this app):
     - Railway will automatically use the Dockerfile and docker-entrypoint script, which handles database setup including queue schema loading
 
@@ -201,9 +201,9 @@ RAILS_ENV=production rails assets:precompile
 
 **Symptoms**: Errors like "relation 'solid_queue_jobs' does not exist"
 
-**Solution**: Load the SolidQueue schema:
+**Solution**: Run the SolidQueue migrations:
 ```bash
-rails db:schema:load:queue
+rails db:migrate:queue
 ```
 
 For production deployments, ensure this command is included in your build process.

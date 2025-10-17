@@ -20,7 +20,12 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   
   echo "Running migrations for cache, queue, and cable databases..."
   ./bin/rails db:migrate:cache --trace || echo "Cache migrations may have already run"
-  ./bin/rails db:schema:load:queue --trace || echo "Queue schema may have already been loaded"
+
+  echo "Running queue database migrations..."
+  ./bin/rails db:migrate:queue --trace
+  echo "Verifying SolidQueue tables exist..."
+  ./bin/rails runner "puts 'All tables:'; puts ActiveRecord::Base.connection.tables.sort.join(', '); puts 'SolidQueue tables:'; puts ActiveRecord::Base.connection.tables.grep(/^solid_queue/).join(', ')" --trace
+
   ./bin/rails db:migrate:cable --trace || echo "Cable migrations may have already run"
 fi
 
