@@ -41,7 +41,7 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 # Spreadsheet import
-gem "roo", "~> 2.10.0"
+gem "roo", "~> 3.0.0"
 
 # Data grid
 gem "ag-grid-community-rails"
