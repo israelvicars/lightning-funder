@@ -10,7 +10,7 @@ class CreateImportBatches < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :import_batches, :status
   end
 end

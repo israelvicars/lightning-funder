@@ -5,11 +5,11 @@ Rails.application.configure do
 
   # Don't require master key for credentials (we use ENV vars for secrets)
   config.require_master_key = false
-  
+
   # Disable ActiveRecord encryption (not using it)
   config.active_record.encryption.support_unencrypted_data = true
   config.active_record.encryption.extend_queries = false
-  
+
   # Use inline job processing for simplicity (processes synchronously)
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
@@ -89,9 +89,9 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
-  
+
   # Use SECRET_KEY_BASE from environment, fallback to dummy for asset compilation
-  config.secret_key_base = ENV['SECRET_KEY_BASE'] || ENV['SECRET_KEY_BASE_DUMMY']
+  config.secret_key_base = ENV["SECRET_KEY_BASE"] || ENV["SECRET_KEY_BASE_DUMMY"]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [

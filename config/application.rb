@@ -22,7 +22,7 @@ module GrantImporter
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
-    
+
     # Don't require master key - we use environment variables for secrets
     config.require_master_key = false unless Rails.env.development?
 

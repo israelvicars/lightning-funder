@@ -7,7 +7,7 @@ class CreateGrants < ActiveRecord::Migration[8.0]
       t.string :status, null: false
       t.string :project_name, null: false
       t.integer :fiscal_year, null: false
-      
+
       # Optional date fields (F-M)
       t.date :deadline
       t.date :submission_date
@@ -15,11 +15,11 @@ class CreateGrants < ActiveRecord::Migration[8.0]
       t.date :award_start_date
       t.date :award_end_date
       t.date :date_notified
-      
+
       # Optional amount fields (K-L)
       t.decimal :amount_requested, precision: 10, scale: 2
       t.decimal :amount_awarded, precision: 10, scale: 2
-      
+
       # Optional text fields (N-W)
       t.text :upcoming_tasks
       t.string :portal_website
@@ -31,14 +31,14 @@ class CreateGrants < ActiveRecord::Migration[8.0]
       t.text :opportunity_notes
       t.text :funder_notes
       t.string :grant_owner
-      
+
       # Import tracking
       t.references :import_batch, foreign_key: true
       t.integer :row_number
-      
+
       t.timestamps
     end
-    
+
     add_index :grants, :funder_name
     add_index :grants, :status
     add_index :grants, :fiscal_year

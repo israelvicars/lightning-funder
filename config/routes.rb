@@ -11,23 +11,23 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "imports#new"
-  
-  resources :imports, only: [:new, :create, :show] do
+
+  resources :imports, only: [ :new, :create, :show ] do
     collection do
       get :status
     end
   end
-  
-  resources :import_batches, only: [:show]
-  
-  resources :grants, only: [:index, :update] do
+
+  resources :import_batches, only: [ :show ]
+
+  resources :grants, only: [ :index, :update ] do
     collection do
       post :bulk_update
     end
   end
-  
+
   # Admin routes (demo purposes - no auth)
-  get 'admin', to: 'admin#index'
-  delete 'admin/grants', to: 'admin#destroy_all_grants', as: 'admin_destroy_grants'
-  delete 'admin/batches', to: 'admin#destroy_all_batches', as: 'admin_destroy_batches'
+  get "admin", to: "admin#index"
+  delete "admin/grants", to: "admin#destroy_all_grants", as: "admin_destroy_grants"
+  delete "admin/batches", to: "admin#destroy_all_batches", as: "admin_destroy_batches"
 end
