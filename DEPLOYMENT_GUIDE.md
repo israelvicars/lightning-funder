@@ -47,14 +47,14 @@ redis://host:port/0
    - `RAILS_ENV`: `production`
 
 4. Build Command:
-   ```
-   bundle install && rails assets:precompile && rails db:migrate
-   ```
-   
-   Or with trace for debugging:
-   ```
-   bundle install && rails assets:precompile && rails db:migrate --trace
-   ```
+```
+bundle install && rails assets:precompile && rails db:migrate && rails db:schema:load:queue
+```
+
+Or with trace for debugging:
+```
+bundle install && rails assets:precompile && rails db:migrate --trace && rails db:schema:load:queue
+```
 
 5. Start Command:
    ```
@@ -72,8 +72,9 @@ heroku config:set SECRET_KEY_BASE=$(rails secret)
 # Deploy
 git push heroku main
 
-# Run migrations
+# Run migrations and load queue schema
 heroku run rails db:migrate
+heroku run rails db:schema:load:queue
 ```
 
 ### Railway
@@ -81,9 +82,12 @@ heroku run rails db:migrate
 1. Create a new project from GitHub
 2. Add PostgreSQL database
 3. Set environment variables:
-   - `SECRET_KEY_BASE`: [generated secret]
-   - `NIXPACKS_BUILD_CMD`: `bundle install && rails assets:precompile`
-   - `NIXPACKS_START_CMD`: `rails db:migrate && rails server -b 0.0.0.0 -p $PORT`
+- `SECRET_KEY_BASE`: [generated secret]
+4. If using Nixpacks (default):
+- `NIXPACKS_BUILD_CMD`: `bundle install && rails assets:precompile && rails db:migrate && rails db:schema:load:queue`
+    - `NIXPACKS_START_CMD`: `rails server -b 0.0.0.0 -p $PORT`
+5. If using Docker (recommended for this app):
+    - Railway will automatically use the Dockerfile and docker-entrypoint script, which handles database setup including queue schema loading
 
 ### Fly.io
 
@@ -117,6 +121,7 @@ RAILS_ENV=production
 - [ ] Generate and set `SECRET_KEY_BASE`
 - [ ] Set `DATABASE_URL` to PostgreSQL connection
 - [ ] Run database migrations: `rails db:migrate`
+- [ ] Load SolidQueue schema: `rails db:schema:load:queue`
 - [ ] Precompile assets: `rails assets:precompile` (if needed)
 - [ ] Set `REDIS_URL` if using background jobs
 - [ ] Configure production host settings in `config/environments/production.rb`
@@ -190,6 +195,19 @@ postgres://username:password@host:port/database_name
 RAILS_ENV=production rails assets:precompile
 ```
 
+### SolidQueue Tables Missing
+
+**Cause**: SolidQueue database tables haven't been created.
+
+**Symptoms**: Errors like "relation 'solid_queue_jobs' does not exist"
+
+**Solution**: Load the SolidQueue schema:
+```bash
+rails db:schema:load:queue
+```
+
+For production deployments, ensure this command is included in your build process.
+
 ---
 
 ## Security Notes
@@ -215,6 +233,7 @@ heroku config:set SECRET_KEY_BASE=<your-secret>
 # Deploy
 git push heroku main
 heroku run rails db:migrate
+heroku run rails db:schema:load:queue
 ```
 
 ### Subsequent Deploys

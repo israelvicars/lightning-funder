@@ -20,7 +20,7 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   
   echo "Running migrations for cache, queue, and cable databases..."
   ./bin/rails db:migrate:cache --trace || echo "Cache migrations may have already run"
-  ./bin/rails db:migrate:queue --trace || echo "Queue migrations may have already run"
+  ./bin/rails db:schema:load:queue --trace || echo "Queue schema may have already been loaded"
   ./bin/rails db:migrate:cable --trace || echo "Cable migrations may have already run"
 fi
 
