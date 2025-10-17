@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Grant Importer" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+      }
+      
+      .navbar {
+        background-color: #fff;
+        border-bottom: 1px solid #e1e4e8;
+        padding: 0 2rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
+      
+      .navbar-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 70px;
+      }
+      
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+      
+      .navbar-brand img {
+        height: 40px;
+        margin-right: 12px;
+      }
+      
+      .navbar-nav {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+      }
+      
+      .nav-link {
+        text-decoration: none;
+        color: #555;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+      }
+      
+      .nav-link:hover {
+        color: #007bff;
+        background-color: #f0f4ff;
+      }
+      
+      .nav-link.active {
+        color: #007bff;
+        background-color: #e7f0ff;
+      }
+      
+      .main-content {
+        padding: 2rem;
+      }
+      
+      .flash-messages {
+        max-width: 1400px;
+        margin: 0 auto 1rem;
+      }
+      
+      .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
+      
+      .alert-notice {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      
+      .alert-alert {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <%= link_to root_path, class: "navbar-brand" do %>
+          <%= image_tag "lightning-funder.png", alt: "Grant Importer Logo" %>
+        <% end %>
+        
+        <ul class="navbar-nav">
+          <li>
+            <%= link_to "Upload", new_import_path, class: "nav-link #{current_page?(new_import_path) ? 'active' : ''}" %>
+          </li>
+          <li>
+            <%= link_to "All Grants", grants_path, class: "nav-link #{current_page?(grants_path) ? 'active' : ''}" %>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+    <div class="main-content">
+      <% if notice.present? %>
+        <div class="flash-messages">
+          <div class="alert alert-notice"><%= notice %></div>
+        </div>
+      <% end %>
+      
+      <% if alert.present? %>
+        <div class="flash-messages">
+          <div class="alert alert-alert"><%= alert %></div>
+        </div>
+      <% end %>
+      
+      <%= yield %>
+    </div>
+  </body>
+</html>

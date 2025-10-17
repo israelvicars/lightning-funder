@@ -1,0 +1,196 @@
+<div class="container">
+  <h1>Upload Grant Template</h1>
+  
+  <div class="upload-form">
+    <h2>Upload Grant Template</h2>
+    
+    <%= form_with url: imports_path, method: :post, multipart: true do |form| %>
+      <div class="form-group">
+        <%= form.label :file, "Select Excel File (.xlsx, .xls)" %>
+        <%= form.file_field :file, accept: ".xlsx,.xls", required: true, class: "form-control" %>
+      </div>
+      
+      <div class="form-actions">
+        <%= form.submit "Upload and Import", class: "btn btn-primary" %>
+        <%= link_to "View All Grants", grants_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+  
+  <div class="recent-imports">
+    <h2>Recent Imports</h2>
+    
+    <% if @import_batches.any? %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Filename</th>
+            <th>Status</th>
+            <th>Total Rows</th>
+            <th>Successful</th>
+            <th>Failed</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @import_batches.each do |batch| %>
+            <tr>
+              <td><%= batch.filename %></td>
+              <td><span class="badge <%= status_class(batch.status) %>"><%= batch.status %></span></td>
+              <td><%= batch.total_rows || '-' %></td>
+              <td><%= batch.successful_rows %></td>
+              <td><%= batch.failed_rows %></td>
+              <td><%= batch.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+              <td>
+                <%= link_to "View", import_batch_path(batch), class: "btn btn-sm btn-info" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No imports yet. Upload your first grant template above.</p>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+  }
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3748;
+  }
+  
+  .upload-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .btn-primary {
+    background: #3182ce;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: #2c5aa0;
+  }
+  
+  .btn-secondary {
+    background: #718096;
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background: #4a5568;
+  }
+  
+  .btn-info {
+    background: #38b2ac;
+    color: white;
+  }
+  
+  .btn-info:hover {
+    background: #319795;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table th {
+    background: #f8f9fa;
+    font-weight: 600;
+  }
+  
+  .badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  .badge-pending {
+    background: #ffc107;
+    color: #000;
+  }
+  
+  .badge-processing {
+    background: #17a2b8;
+    color: white;
+  }
+  
+  .badge-completed {
+    background: #28a745;
+    color: white;
+  }
+  
+  .badge-failed {
+    background: #dc3545;
+    color: white;
+  }
+</style>

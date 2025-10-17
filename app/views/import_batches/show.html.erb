@@ -1,0 +1,161 @@
+<div class="container">
+  <h1>Import Batch Details</h1>
+  
+  <div class="batch-info">
+    <div class="info-row">
+      <strong>Filename:</strong> <%= @import_batch.filename %>
+    </div>
+    <div class="info-row">
+      <strong>Status:</strong> 
+      <span class="badge <%= status_class(@import_batch.status) %>">
+        <%= @import_batch.status %>
+      </span>
+    </div>
+    <div class="info-row">
+      <strong>Total Rows:</strong> <%= @import_batch.total_rows || 'Processing...' %>
+    </div>
+    <div class="info-row">
+      <strong>Successful:</strong> <%= @import_batch.successful_rows %>
+    </div>
+    <div class="info-row">
+      <strong>Failed:</strong> <%= @import_batch.failed_rows %>
+    </div>
+    <div class="info-row">
+      <strong>Created:</strong> <%= @import_batch.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
+    </div>
+  </div>
+  
+  <% if @import_batch.error_details.present? %>
+    <div class="errors-section">
+      <h2>Import Errors</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Row Number</th>
+            <th>Errors</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @import_batch.error_details.each do |row_num, errors| %>
+            <tr>
+              <td><%= row_num %></td>
+              <td>
+                <ul>
+                  <% errors.each do |error| %>
+                    <li><%= error %></li>
+                  <% end %>
+                </ul>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+  
+  <div class="actions">
+    <%= link_to "Back to Import", new_import_path, class: "btn btn-secondary" %>
+    <%= link_to "View All Grants", grants_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .batch-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+  }
+  
+  .info-row {
+    margin-bottom: 10px;
+  }
+  
+  .errors-section {
+    margin-top: 30px;
+  }
+  
+  .errors-section h2 {
+    margin-bottom: 15px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table th {
+    background: #f8f9fa;
+    font-weight: 600;
+  }
+  
+  .table ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  
+  .actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn-primary {
+    background: #007bff;
+    color: white;
+  }
+  
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  .badge-pending {
+    background: #ffc107;
+    color: #000;
+  }
+  
+  .badge-processing {
+    background: #17a2b8;
+    color: white;
+  }
+  
+  .badge-completed {
+    background: #28a745;
+    color: white;
+  }
+  
+  .badge-failed {
+    background: #dc3545;
+    color: white;
+  }
+</style>

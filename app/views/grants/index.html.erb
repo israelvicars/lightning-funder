@@ -1,0 +1,320 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@28.1.1/styles/ag-grid.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@28.1.1/styles/ag-theme-alpine.css">
+
+<div class="container">
+  <h1>Grant Data Grid</h1>
+  
+  <div class="grid-toolbar">
+    <%= link_to "Upload New Grants", new_import_path, class: "btn btn-primary" %>
+    <button id="saveChanges" class="btn btn-success">Save Changes</button>
+    <button id="exportCsv" class="btn btn-secondary">Export CSV</button>
+  </div>
+  
+  <div id="grantsGrid" class="ag-theme-alpine"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@28.1.1/dist/ag-grid-community.min.js"></script>
+
+<script>
+  let gridInstance = null;
+  
+  function initializeGrid() {
+    const gridDiv = document.querySelector('#grantsGrid');
+    if (!gridDiv) return;
+    
+    // Clear any existing grid
+    gridDiv.innerHTML = '';
+    
+    const columnDefs = [
+      { 
+        headerName: 'ID', 
+        field: 'id', 
+        width: 70, 
+        editable: false,
+        pinned: 'left'
+      },
+      { 
+        headerName: 'Funder Name', 
+        field: 'funder_name', 
+        editable: true,
+        cellClass: 'mandatory-field',
+        width: 200
+      },
+      { 
+        headerName: 'Grant Name', 
+        field: 'grant_name', 
+        editable: true,
+        cellClass: 'mandatory-field',
+        width: 200
+      },
+      { 
+        headerName: 'Status', 
+        field: 'status', 
+        editable: true,
+        cellClass: 'mandatory-field',
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+          values: ['Awarded - Active', 'Awarded - Closed', 'Submitted', 'Planned', 'Researching', 'Abandoned']
+        },
+        width: 150
+      },
+      { 
+        headerName: 'Project Name', 
+        field: 'project_name', 
+        editable: true,
+        cellClass: 'mandatory-field',
+        width: 200
+      },
+      { 
+        headerName: 'Fiscal Year', 
+        field: 'fiscal_year', 
+        editable: true,
+        cellClass: 'mandatory-field',
+        width: 120
+      },
+      { 
+        headerName: 'Deadline', 
+        field: 'deadline', 
+        editable: true,
+        width: 130
+      },
+      { 
+        headerName: 'Submission Date', 
+        field: 'submission_date', 
+        editable: true,
+        width: 150
+      },
+      { 
+        headerName: 'Date Awarded/Declined', 
+        field: 'date_awarded_declined', 
+        editable: true,
+        width: 180
+      },
+      { 
+        headerName: 'Award Start Date', 
+        field: 'award_start_date', 
+        editable: true,
+        width: 150
+      },
+      { 
+        headerName: 'Award End Date', 
+        field: 'award_end_date', 
+        editable: true,
+        width: 150
+      },
+      { 
+        headerName: 'Amount Requested', 
+        field: 'amount_requested', 
+        editable: true,
+        valueFormatter: params => params.value ? '$' + parseFloat(params.value).toLocaleString() : '',
+        width: 160
+      },
+      { 
+        headerName: 'Amount Awarded', 
+        field: 'amount_awarded', 
+        editable: true,
+        valueFormatter: params => params.value ? '$' + parseFloat(params.value).toLocaleString() : '',
+        width: 160
+      },
+      { 
+        headerName: 'Date Notified', 
+        field: 'date_notified', 
+        editable: true,
+        width: 130
+      },
+      { 
+        headerName: 'Upcoming Tasks', 
+        field: 'upcoming_tasks', 
+        editable: true,
+        width: 200
+      },
+      { 
+        headerName: 'Portal Website', 
+        field: 'portal_website', 
+        editable: true,
+        width: 200
+      },
+      { 
+        headerName: 'Portal Username', 
+        field: 'portal_username', 
+        editable: true,
+        width: 150
+      },
+      { 
+        headerName: 'Funder Location', 
+        field: 'funder_location', 
+        editable: true,
+        width: 150
+      },
+      { 
+        headerName: 'Funder Contact Info', 
+        field: 'funder_contact_info', 
+        editable: true,
+        width: 200
+      },
+      { 
+        headerName: 'Funder Type', 
+        field: 'funder_type', 
+        editable: true,
+        width: 150
+      },
+      { 
+        headerName: 'Opportunity Notes', 
+        field: 'opportunity_notes', 
+        editable: true,
+        width: 200
+      },
+      { 
+        headerName: 'Funder Notes', 
+        field: 'funder_notes', 
+        editable: true,
+        width: 200
+      },
+      { 
+        headerName: 'Grant Owner', 
+        field: 'grant_owner', 
+        editable: true,
+        width: 150
+      }
+    ];
+    
+    const gridOptions = {
+      columnDefs: columnDefs,
+      defaultColDef: {
+        sortable: true,
+        filter: true,
+        resizable: true
+      },
+      rowData: <%= raw @grants.to_json %>,
+      rowSelection: 'multiple',
+      animateRows: true,
+      enableCellChangeFlash: true
+    };
+    
+    gridInstance = new agGrid.Grid(gridDiv, gridOptions);
+    
+    document.getElementById('saveChanges').addEventListener('click', function() {
+      const updatedRows = [];
+      gridOptions.api.forEachNode(node => {
+        if (node.data) {
+          updatedRows.push(node.data);
+        }
+      });
+      
+      if (updatedRows.length === 0) {
+        alert('No data to save');
+        return;
+      }
+      
+      fetch('/grants/bulk_update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ grants: updatedRows })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.errors && data.errors.length > 0) {
+          alert('Some records failed to save. Check console for details.');
+          console.error('Errors:', data.errors);
+        } else {
+          alert('All changes saved successfully!');
+        }
+      })
+      .catch(error => {
+        alert('Error saving changes: ' + error);
+      });
+    });
+    
+    document.getElementById('exportCsv').addEventListener('click', function() {
+      gridOptions.api.exportDataAsCsv({
+        fileName: 'grants_export.csv'
+      });
+    });
+  }
+  
+  // Clean up before caching
+  document.addEventListener('turbo:before-cache', function() {
+    const gridDiv = document.querySelector('#grantsGrid');
+    if (gridDiv) {
+      gridDiv.innerHTML = '';
+    }
+    gridInstance = null;
+  });
+  
+  // Initialize on turbo:load (fires on every page load/navigation)
+  document.addEventListener('turbo:load', initializeGrid);
+</script>
+
+<style>
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+  }
+  
+  #grantsGrid {
+    height: 600px;
+    width: 100%;
+  }
+  
+  .mandatory-field {
+    background-color: #fff3cd !important;
+  }
+  
+  .ag-theme-alpine {
+    --ag-border-color: #ddd;
+  }
+  
+  .grid-toolbar {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .btn-primary {
+    background: #3182ce;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: #2c5aa0;
+  }
+  
+  .btn-success {
+    background: #38a169;
+    color: white;
+  }
+  
+  .btn-success:hover {
+    background: #2f855a;
+  }
+  
+  .btn-secondary {
+    background: #718096;
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background: #4a5568;
+  }
+</style>

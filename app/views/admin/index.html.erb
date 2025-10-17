@@ -1,0 +1,172 @@
+<div class="admin-container">
+  <h1>🔧 Admin Panel</h1>
+  <p class="admin-subtitle">Demo Administration - No Authentication Required</p>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= @grant_count %></div>
+      <div class="stat-label">Total Grants</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-number"><%= @import_batch_count %></div>
+      <div class="stat-label">Import Batches</div>
+    </div>
+  </div>
+  
+  <div class="admin-actions">
+    <div class="action-card">
+      <h2>Clear All Grants</h2>
+      <p>Delete all grant records from the database. Import batches will remain.</p>
+      
+      <%= button_to "Delete All Grants", admin_destroy_grants_path, 
+          method: :delete, 
+          class: "btn btn-danger",
+          data: { confirm: "Are you sure? This will permanently delete #{@grant_count} grants. This action cannot be undone!" } %>
+    </div>
+    
+    <div class="action-card">
+      <h2>Clear All Data</h2>
+      <p>Delete all import batches and their associated grants. This will reset the entire database.</p>
+      
+      <%= button_to "Delete All Data", admin_destroy_batches_path, 
+          method: :delete, 
+          class: "btn btn-danger-full",
+          data: { confirm: "⚠️ WARNING: This will delete #{@import_batch_count} batches and #{@grant_count} grants. Are you absolutely sure?" } %>
+    </div>
+  </div>
+  
+  <div class="admin-nav">
+    <%= link_to "← Back to Home", root_path, class: "btn btn-secondary" %>
+    <%= link_to "View All Grants", grants_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<style>
+  .admin-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  
+  .stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #3182ce;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-label {
+    color: #718096;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .admin-actions {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .action-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+  }
+  
+  .action-card h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a202c;
+  }
+  
+  .action-card p {
+    color: #718096;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .admin-nav {
+    display: flex;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e2e8f0;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-size: 1rem;
+  }
+  
+  .btn-danger {
+    background: #e53e3e;
+    color: white;
+  }
+  
+  .btn-danger:hover {
+    background: #c53030;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+  }
+  
+  .btn-danger-full {
+    background: #742a2a;
+    color: white;
+  }
+  
+  .btn-danger-full:hover {
+    background: #63171b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(116, 42, 42, 0.4);
+  }
+  
+  .btn-secondary {
+    background: #718096;
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background: #4a5568;
+  }
+</style>
