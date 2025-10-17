@@ -50,11 +50,18 @@ redis://host:port/0
    ```
    bundle install && rails assets:precompile && rails db:migrate
    ```
+   
+   Or with trace for debugging:
+   ```
+   bundle install && rails assets:precompile && rails db:migrate --trace
+   ```
 
 5. Start Command:
    ```
    bundle exec puma -C config/puma.rb
    ```
+
+**Note**: Rails credentials are NOT required. The app uses environment variables for all secrets.
 
 ### Heroku
 
@@ -139,6 +146,15 @@ RAILS_ENV=production
 ```bash
 rails secret  # Generate a new secret
 ```
+
+### "ActiveSupport::MessageEncryptor::InvalidMessage" Error
+
+**Cause**: Rails is trying to decrypt credentials but master key is missing
+
+**Solution**: This app doesn't use Rails credentials - it uses environment variables instead. This error should not occur with the latest code. If it does:
+- Ensure you have the latest code from GitHub
+- Verify `config.require_master_key = false` is in production.rb
+- Add `--trace` to your deployment commands for more details
 
 ### File Upload Not Working
 
