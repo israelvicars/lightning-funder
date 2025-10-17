@@ -5,6 +5,10 @@ Rails.application.configure do
 
   # Don't require master key for credentials (we use ENV vars for secrets)
   config.require_master_key = false
+  
+  # Disable ActiveRecord encryption (not using it)
+  config.active_record.encryption.support_unencrypted_data = true
+  config.active_record.encryption.extend_queries = false
 
   # Code is not reloaded between requests.
   config.enable_reloading = false
