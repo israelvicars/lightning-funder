@@ -47,7 +47,7 @@ gem "roo", "~> 2.10.0"
 gem "ag-grid-community-rails"
 
 # Background jobs
-gem "sidekiq", "~> 7.0"
+gem "sidekiq", "~> 8.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
